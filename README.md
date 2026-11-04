@@ -147,3 +147,69 @@ awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) h[$i]=i; next}
             {n[$h["call"]]++} END{for(k in n) printf "  %-20s %4d\n", k, n[k]}' \
     ancestry_out/target_ancestry.tsv | sort -k2 -rn
 ```
+
+
+## Run on MobaXterm
+
+'''
+module load apps/binapps/conda/miniforge3/26.9.4-0
+conda activate atp_ancestry
+(
+set -euo pipefail
+
+cd /mnt/iusers01/km01/j65990jy/ATP/
+
+export TARGET="$PWD/ATP_data"
+
+for ext in bed bim fam; do
+    test -s "$TARGET.$ext" || {
+        echo "miss：$TARGET.$ext" >&2
+        exit 1
+    }
+done
+
+for file in 00_setup_reference.sh run_ancestry.sh \
+            make_labels.py harmonise.py classify_ancestry.py; do
+    test -s "$file" || {
+        echo "miss：$file" >&2
+        exit 1
+    }
+done
+
+command -v plink
+command -v plink2
+python3 -c "import numpy, pandas, sklearn, matplotlib"
+
+export PLINK="$(command -v plink)"
+export PLINK2="$(command -v plink2)"
+
+export REFDIR="$PWD/1000G"
+export OUTDIR="$(mktemp -d "$PWD/ancestry_trial_XXXXXX")"
+
+export THREADS=4
+export MEMORY=12000
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export LOKY_MAX_CPU_COUNT=4
+
+sed 's/--pfile all_phase3 vzs/--pfile all_phase3 vzs --memory 12000 --threads 4/' \
+00_setup_reference.sh > 00_setup_reference_csf.sh
+
+JOB_ID=$(sbatch --parsable \
+    --job-name=ATP_ancestry \
+    --partition=multicore_small \
+    --ntasks=1 \
+    --cpus-per-task=4 \
+    --mem=16G \
+    --time=04:00:00 \
+    --chdir="$PWD" \
+    --export=ALL \
+    --output="$OUTDIR/slurm-%j.log" \
+    --wrap='bash 00_setup_reference_csf.sh && bash run_ancestry.sh')
+
+echo "NO：$JOB_ID"
+echo "Outdic：$OUTDIR"
+echo "LOGDIC：$OUTDIR/slurm-$JOB_ID.log"
+)
+'''
