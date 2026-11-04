@@ -157,9 +157,9 @@ conda activate atp_ancestry
 (
 set -euo pipefail
 
-cd /mnt/iusers01/km01/j65990jy/ATP/
+cd ...
 
-export TARGET="$PWD/ATP_data"
+export TARGET="$PWD/..."
 
 for ext in bed bim fam; do
     test -s "$TARGET.$ext" || {
