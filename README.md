@@ -151,7 +151,7 @@ awk -F'\t' 'NR==1{for(i=1;i<=NF;i++) h[$i]=i; next}
 
 ## Run on MobaXterm
 
-'''
+```
 module load apps/binapps/conda/miniforge3/26.9.4-0
 conda activate atp_ancestry
 (
@@ -212,4 +212,4 @@ echo "NO：$JOB_ID"
 echo "Outdic：$OUTDIR"
 echo "LOGDIC：$OUTDIR/slurm-$JOB_ID.log"
 )
-'''
+```
