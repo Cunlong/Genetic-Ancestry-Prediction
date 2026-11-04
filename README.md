@@ -16,9 +16,8 @@ genetic ancestry prediction based on genetic data
 | | called by |
 |---|---|
 | `make_labels.py` | `00_setup_reference.sh` |
-| `harmonise.py` | `run_ancestry.sh`, step 3 |
-| `classify_ancestry.py` | `run_ancestry.sh`, step 7 |
-| `plot_mds.R` | `mds_stratification.sh` |
+| `harmonise.py` | `run_ancestry.sh` |
+| `classify_ancestry.py` | `run_ancestry.sh`|
 
 All the shell scripts find their Python helpers through their own directory, so
 **keep everything in one folder**.
